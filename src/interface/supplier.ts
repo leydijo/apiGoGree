@@ -1,0 +1,6 @@
+export interface Supplier {
+  supplier_name: string;
+  supplier_phone: number;
+  supplier_address: string;
+  supplier_website: string;
+}
