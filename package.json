@@ -32,6 +32,7 @@
     "@types/jsonwebtoken": "^9.0.1",
     "@types/morgan": "^1.9.4",
     "@types/nodemailer": "^6.4.7",
-    "nodemon": "^2.0.21"
+    "nodemon": "^2.0.21",
+    "typescript": "^5.2.2"
   }
 }
