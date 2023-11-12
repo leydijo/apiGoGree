@@ -1,13 +1,16 @@
 import "dotenv/config";
 import app from "./app/app";
-import db from "./config/mongo";
+import dbConnect from "./config/mysql";
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
-db().then(() => {
-  console.log("Conexion ready");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🚀`);
-});
+// Conecta a la base de datos MySQL
+dbConnect()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT} 🚀`);
+    });
+  })
+  .catch((error) => {
+    console.error("Error connecting to MySQL:", error);
+  });

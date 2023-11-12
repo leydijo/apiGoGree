@@ -1,32 +1,32 @@
-import { Response } from "express";
-import UserModel from "../models/user";
-import { generateToken } from "../utils/jwt.handle";
-import { Auth } from "../interface/auth";
-import { handleHttp } from "../utils/response.handle";
-import responseApi from "../lang/response-api";
+// import { Response } from "express";
+// import UserModel from "../models/register";
+// import { generateToken } from "../utils/jwt.handle";
+// import { Auth } from "../interface/register";
+// import { handleHttp } from "../utils/response.handle";
+// import responseApi from "../lang/response-api";
 
-const findUser = async ({ identification }: Auth, res: Response) => {
-  try {
-    const checkIs = await UserModel.findOne({ identification });
-    if (!checkIs) {
-      return handleHttp(res, 400, responseApi.user.notFound);
-    }
+// const findUser = async ({ identification }: Auth, res: Response) => {
+//   try {
+//     const checkIs = await UserModel.findOne({ identification });
+//     if (!checkIs) {
+//       return handleHttp(res, 400, responseApi.user.notFound);
+//     }
 
-    if (checkIs.state !== "active") {
-      return handleHttp(res, 403, responseApi.user.inactive);
-    }
+//     if (checkIs.state !== "active") {
+//       return handleHttp(res, 403, responseApi.user.inactive);
+//     }
 
-    const token = generateToken(checkIs.identification, "10m");
-    const data: any = {
-      token,
-      user: checkIs,
-    };
+//     const token = generateToken(checkIs.identification, "10m");
+//     const data: any = {
+//       token,
+//       user: checkIs,
+//     };
 
-    return handleHttp(res, 200, responseApi.user.success, data);
-  } catch (e) {
-    console.log("Error findUser", e);
-    return handleHttp(res, 500, responseApi.general.serverError);
-  }
-};
+//     return handleHttp(res, 200, responseApi.user.success, data);
+//   } catch (e) {
+//     console.log("Error findUser", e);
+//     return handleHttp(res, 500, responseApi.general.serverError);
+//   }
+// };
 
-export { findUser };
+// export { findUser };

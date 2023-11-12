@@ -23,4 +23,7 @@ export default {
   email: {
     success: "El correo se ha enviado correctamente",
   },
+  registration:{
+    success: "the registration was successful",
+  }
 };
