@@ -1,5 +1,6 @@
-import { createConnection, Connection } from 'mysql2/promise'; 
 import "dotenv/config";
+import { createConnection, Connection } from 'mysql2/promise'; 
+
 const mysql = require('mysql2');
 
 let dbConnection: Connection | null = null;
