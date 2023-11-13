@@ -1,35 +1,101 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/mysql');
-import { Customer } from "../interface/customer";
-const mysql = require('mysql2');
-const pool = require('../config/mysql');
-
+import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
+import { Customer } from '../interface/customer';
 require('dotenv').config();
 
-class CustomerModel {
-  constructor() {
-    const pool = mysql.createPool({
-      connectionLimit: 10,
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      port: process.env.DB_PORT,
-      database: process.env.DB_DATABASE
-    });
-  }
+const sequelize = new Sequelize({
+  dialect: 'mysql',
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT || '3306', 10),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+});
 
-  async createCustomer(newCustomer: Customer) {
-    const sql = 'INSERT INTO customers (customer_type, customer_name, customer_phone, customer_email, customer_address) VALUES (?, ?, ?, ?, ?)';
-    const values = [newCustomer.customer_type, newCustomer.customer_name, newCustomer.customer_phone, newCustomer.customer_email, newCustomer.customer_address];
+interface CustomerCreationAttributes extends Optional<Customer, 'customer_id'> {}
 
+class CustomerModel extends Model<Customer, CustomerCreationAttributes> {
+  public customer_id!: number;
+  public customer_type!: string;
+  public customer_name!: string;
+  public customer_phone!: number;
+  public customer_email!: string;
+  public customer_address!: string;
+
+  static async createCustomer(newCustomerInput: Customer) {
     try {
-      const [results, fields] = await pool.query(sql, values);
-      return results;
-    } catch (error) {
-      console.error('Error creating customers:', error);
-      throw error;
+      // Verificar la unicidad del email antes de insertar
+      const existingCustomer = await CustomerModel.findOne({
+        where: {
+          customer_email: newCustomerInput.customer_email,
+        },
+      });
+
+      if (existingCustomer) {
+        throw new Error('Email is already in use');
+      }
+      if (!newCustomerInput.customer_phone) {
+        throw new Error('Phone cannot be empty');
+      }
+      // Crear una instancia del modelo con los datos proporcionados
+      const createdCustomer = await CustomerModel.create(newCustomerInput);
+
+      return createdCustomer;
+    } catch (error: any) {
+      if (error.message === 'Email is already in use') {
+        console.log('Email is already in use:', error.message);
+        throw error;
+      }
+      if (error.message === 'Phone cannot be empty') {
+        console.log('Phone cannot be empty:', error.message);
+        throw error;
+      }
+      console.error('Error creating customer:', error);
+      throw new Error('Error creating customer');
     }
   }
 }
 
-export { CustomerModel};                      
+CustomerModel.init(
+  {
+    customer_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+    },
+    customer_type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    customer_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    customer_phone: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Phone cannot be empty',
+        },
+      },
+    },
+    customer_email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    customer_address: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: 'Customer',
+    tableName: 'Customers',
+    timestamps: false,
+  }
+);
+
+export { CustomerModel };

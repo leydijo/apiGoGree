@@ -1,33 +1,44 @@
-// En el controlador (authenticationController.ts)
+
 import { Request, Response } from "express";
-import { handleHttp } from "../utils/response.handle";
-import responseApi from "../lang/response-api";
-import { registerUser } from "../services/register";
+import { RegisterUser } from "../services/register";
 import { Register } from "../interface/register";
 
-const registerCtrl = async  (req: Request, res: Response)=> {
-  try {
-    const { fullname, email, password, confirmPassword } = req.body;
-   
-    if (typeof fullname === "undefined" || typeof email === "undefined" || typeof password === "undefined") {
-      return handleHttp(res, 400, responseApi.general.notFound);
+class RegisterController  {
+  async registerUser(req: Request, res: Response) {
+    try {
+      const { fullname, email, password, confirmPassword, date } = req.body;
+
+      // Crear un nuevo objeto Register con los datos recibidos
+      const newRegister: Register = {
+     
+        fullname,
+        email,
+        password,
+        confirmPassword,
+        date:new Date(),
+      };
+
+      // Intentar registrar al nuevo usuario
+      const createdUser = await RegisterUser.newUser(newRegister);
+
+      // El usuario se registró con éxito
+      res.status(201).json(createdUser);
+    } catch (error:any) {
+      // Manejar errores específicos
+      if (
+        error.message === 'Fullname must be a non-empty string' ||
+        error.message === 'Invalid email format' ||
+        error.message === 'Passwords do not match' ||
+        error.message == 'Email is already in use'
+      ) {
+        res.status(400).json({ error: error.message });
+      } else {
+        console.error('Error in registerUser controller:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
     }
-
-    const newUser: Register = {
-      fullname,
-      email,
-      password,
-      confirmPassword,
-      date:new Date(),
-    };
-
-    const responseUser = await registerUser(newUser, res);
-    return handleHttp(res, 200, responseApi.registration.success, responseUser);
-
-  } catch (e) {
-    console.log("error in registration", e);
-    return handleHttp(res, 500, responseApi.general.serverError);
   }
-};
-
+}
+const registerCtrl = new RegisterController();
 export { registerCtrl };
+

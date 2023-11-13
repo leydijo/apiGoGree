@@ -25,5 +25,6 @@ export default {
   },
   registration:{
     success: "the registration was successful",
+    emailExists: "mail already exists "
   }
 };
