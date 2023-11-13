@@ -53,7 +53,20 @@ class CustomerModel extends Model<Customer, CustomerCreationAttributes> {
       throw new Error('Error creating customer');
     }
   }
+
+  static async findAllCustomers(): Promise<Customer[]> {
+    try {
+      // Obtener todos los clientes
+      const allCustomers = await CustomerModel.findAll();
+      return allCustomers;
+    } catch (error) {
+      console.error('Error fetching all customers:', error);
+      throw new Error('Error fetching all customers');
+    }
+  }
+
 }
+
 
 CustomerModel.init(
   {

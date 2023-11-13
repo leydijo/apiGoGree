@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
-import { handleHttp } from "../utils/response.handle";
-import responseApi from "../lang/response-api";
-import { registerCustomer } from '../services/customers';
-import { Customer } from "../interface/customer";
-import { areFieldsValid } from "../utils/validationCustomer";
+import { registerCustomer, getAllCustomers } from '../services/customers';
 import { CustomerModel } from "../models/customer";
 
 
 const customerCtrl = async  (req: Request, res: Response)=> {
   try {
     const newCustomerInput =  req.body;
+
+   if (req.method === 'GET') {
+    const customers = await getAllCustomers(res);
+    res.status(201).json(customers);
+   }
 
     const createdCustomer = await CustomerModel.createCustomer(newCustomerInput);
 

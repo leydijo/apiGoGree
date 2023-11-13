@@ -29,5 +29,25 @@ const registerCustomer = async (newCustomer: Customer, res: Response) => {
   }
 };
 
-export { registerCustomer };
+
+const getAllCustomers = async (res: Response) => {
+  try {
+    // Obtener todos los clientes
+    const allCustomers = await CustomerModel.findAllCustomers();
+
+    return res.status(200).json({
+      success: true,
+      message: 'All customers retrieved successfully',
+      data: allCustomers,
+    });
+  } catch (error) {
+    console.error('Error fetching all customers:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+export { registerCustomer, getAllCustomers };
 
