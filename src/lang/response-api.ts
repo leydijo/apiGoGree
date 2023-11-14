@@ -4,6 +4,7 @@ export default {
     notFound: "Los datos ingresados estan incompletos",
     errorToken: "Token invalido",
     errorSession: "La sesión no es valida",
+    methodNotAllowed: "Invalid request"
   },
   user: {
     notFound: "El usuario no se encuentra registrado",

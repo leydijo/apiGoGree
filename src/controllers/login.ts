@@ -2,28 +2,25 @@ import { Request, Response } from "express";
 import { handleHttp } from "../utils/response.handle";
 import responseApi from "../lang/response-api";
 import { login } from "../services/login";
-import { Login } from "../interface/login";
+import { Register } from '../interface/register';
+
 
 const loginCtrl = async  (req: Request, res: Response)=> {
   try {
-    const { username, password, lastlogin} = req.body;
-   
-    if (typeof username === "undefined" ||  typeof password === "undefined" || 
-        typeof lastlogin === "undefined") {
-        return handleHttp(res, 400, responseApi.general.notFound);
+    const newRegister: Register = req.body;
+    
+    const isAuthenticated = await login(newRegister, res);
+
+    return handleHttp(res, 200, 'Login successful', { isAuthenticated });
+
+  } catch (e:any) {
+    console.log('Error in login controller:', e);
+    if (e.message === 'User not found. Verify your credentials') {
+      throw e;
     }
-
-    const newLogin: Login = {
-      username,
-      password,
-      lastlogin
-    };
-
-    const responseUser = await login(newLogin, res);
-    return handleHttp(res, 200, responseApi.registration.success, responseUser);
-
-  } catch (e) {
-    console.log("error in login", e);
+    if (e.message === 'ncorrect password') {
+      throw e;
+    }
     return handleHttp(res, 500, responseApi.general.serverError);
   }
 };
