@@ -1,32 +1,35 @@
 import { Request, Response } from "express";
 import { handleHttp } from "../utils/response.handle";
 import responseApi from "../lang/response-api";
-import { registerSuppliers } from "../services/supplier";
-import { Supplier } from "../interface/supplier";
+import { getAllSuppliers } from "../services/supplier";
+import { SupplierModel } from "../models/supplier";
 
-const supplierCtrl = async  (req: Request, res: Response)=> {
+
+
+const  newSupplier = async (req: Request, res: Response) => {
+
   try {
-    const { supplier_name, supplier_phone, supplier_address, supplier_website } = req.body;
-   
-    if (typeof supplier_name === "undefined" || typeof supplier_phone === "undefined" 
-    || typeof supplier_address === "undefined" || typeof supplier_website === "undefined"  ) {
-      return handleHttp(res, 400, responseApi.general.notFound);
-    }
+    const newSupplierInput =  req.body;
+    const createdSuppliers = await SupplierModel.create(newSupplierInput);
 
-    const newSupplier: Supplier = {
-      supplier_name,
-      supplier_phone,
-      supplier_address,
-      supplier_website
-    };
-
-    const responseUser = await registerSuppliers(newSupplier, res);
-    return handleHttp(res, 200, responseApi.registration.success, responseUser);
-
-  } catch (e) {
-    console.log("error in supplier", e);
-    return handleHttp(res, 500, responseApi.general.serverError);
+    handleHttp(res, 201, responseApi.registration.success, createdSuppliers);
+  } catch (error) {
+    console.error('Error getting all suppliers:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
+
 };
 
-export { supplierCtrl };
+const  allSupplier = async (req: Request, res: Response) => {
+  try {
+    const customers = await getAllSuppliers(res);
+    handleHttp(res, 200, responseApi.registration.success, customers);
+  } catch (error) {
+    console.error('Error getting all suppliers:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+};
+
+
+export { newSupplier, allSupplier};

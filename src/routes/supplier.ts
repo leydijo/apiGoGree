@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { supplierCtrl } from "../controllers/supplier";
+import { newSupplier,allSupplier } from "../controllers/supplier";
 import { checkJwt } from "../middleware/session";
 const router = Router();
 
-router.post("/", supplierCtrl);
-
+router.post("/", newSupplier);
+router.get("/all", allSupplier);
 export { router };

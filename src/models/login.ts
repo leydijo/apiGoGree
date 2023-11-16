@@ -1,6 +1,5 @@
 
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import { verified,hashPassword } from '../utils/bcrypt.handle'; 
 import bcrypt from 'bcrypt';
 import { Register } from '../interface/register';
 

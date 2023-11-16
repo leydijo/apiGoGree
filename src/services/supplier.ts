@@ -1,18 +1,42 @@
 import { Supplier } from "../interface/supplier";
 import { Response } from "express";
-import { SuppliersModel } from "../models/suppliers";
+import { SupplierModel } from "../models/supplier";
 
-const supplierService = new SuppliersModel();
 
-const registerSuppliers = async (newSupplier: Supplier, res: Response) => {
-  try {
-    const responseUser = await supplierService.createSsupplier(newSupplier);
-    console.log(newSupplier);
-    return responseUser;
-  } catch (e) {
-    console.log(e);
-    throw new Error("Error savingSuppliers");
+
+
+
+
+
+  const CreateSuppliers = async (newRegister: Supplier ,res: Response) => {
+    try {
+      const createdSuppliers = await SupplierModel.create(newRegister);
+      return createdSuppliers;
+    } catch (error) {
+      console.error('Error in registerUser service:', error);
+      throw error;
+    }
+
   }
-};
+  const getAllSuppliers = async (res: Response) => {
+    try {
+      // Obtener todos los clientes
+      const allSuppliers = await SupplierModel.findAllSuppliers();
+  
+      return res.status(200).json({
+        success: true,
+        message: 'All suppliers retrieved successfully',
+        data: allSuppliers,
+      });
+    } catch (error) {
+      console.error('Error fetching all suppliers:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+      });
+    }
+  }
 
-export { registerSuppliers };
+
+
+export { CreateSuppliers,getAllSuppliers }
