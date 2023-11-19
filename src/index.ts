@@ -17,7 +17,7 @@ const sequelize = new Sequelize({
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: 'http://localhost:5000/', // Reemplaza esto con la URL de tu aplicación de frontend
+  origin: process.env.ORIGIN, // Reemplaza esto con la URL de tu aplicación de frontend
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
