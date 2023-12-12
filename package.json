@@ -35,7 +35,7 @@
     "mysql2": "^3.6.3",
     "nodemailer": "^6.9.7",
     "sequelize": "^6.35.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.2"
   },
   "engines": {
     "node": "18.16.0",
